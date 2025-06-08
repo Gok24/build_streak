@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Streak Tracker</title>
+  <link href="https://kit-pro.fontawesome.com/releases/v6.5.0/css/pro.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="layout.css">
+</head>
+<body>
+  <!-- Gokul-->
+  <div class="container">
+    <!-- Create Streak -->
+     <div class="createnew">
+      <div class="cn">
+
+        <div class="ctx">
+    <h2>Create new Habit streak</h2>
+    <i onclick="closecn()" class="fa-light fa-circle-xmark"></i>
+  </div>
+
+    <div class="hr"></div>
+    <div class="inps">
+      <label class="sn" for="streakName">Streak name</label>
+    <input type="text" id="streakName" placeholder="Cycling">
+    <label class="sn" for="streakDescription">Description</label>
+    <input id="streakDescription" placeholder="optional">
+
+    <div class="btnw">
+    <button onclick="closecn()" class="cncl">cancel</button>
+    <button class="csbtn" onclick="createStreak()">Create Streak</button>
+  </div>
+  </div>
+        
+</div>
+</div>
+    <!-- Streak List -->
+
+    <div class="view">
+    <div id="streakList"></div>
+    <div class="safepadding"></div>
+  </div>
+  <div id="tooltip" class="custom-tooltip"></div>
+</div>
+
+
+
+<div class="crt">
+  <button onclick="opencn()">Make a new Habit <i class="fa-duotone fa-solid fa-sparkles"></i></button>
+</div>
+
+<div class="greetx">
+  <div class="dot">
+    <dotlottie-player class="dan" background="#000" direction="1"
+      id="animation_plant-office-desk_432b38a2-1151-11ee-81de-4b080921097c" speed="1" mode="normal"
+      src="res/YH2vaIG3yp.lottie" autoplay></dotlottie-player>
+  </div>
+  <div id="tan" class="tan">
+  </div>
+</div>
+
+
+  <script src="app.js"></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
+  <script src="layoutop.js"></script>
+
+  <script src="tan.js"></script>
+</body>
+</html>
