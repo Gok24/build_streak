@@ -178,7 +178,7 @@ function loadStreaks() {
               id="animation_plant-office-desk_432b38a2-1151-11ee-81de-4b080921097c"
               speed="1"
               mode="normal"
-              src="/res/cutecat.lottie"
+              src="res/cutecat.lottie"
               loop="true"
               autoplay
             ></dotlottie-player>
