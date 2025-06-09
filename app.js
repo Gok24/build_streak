@@ -25,7 +25,7 @@ function toggleHeatmapView(streakId) {
 
 //     }
 //   }, 3000);
-// }
+ }
 
 // Format Date & Time nicely with AM/PM
 function formatDateTime(dateStr, timeStr) {
