@@ -64,7 +64,7 @@ body::-webkit-scrollbar {
   justify-content: center;
   width: 100vw;
   left: 0;
-  max-height: 300px;
+  max-height: 230px;
   overflow: scroll;
   padding:0px 0px 10px 0;
   border-radius: 20px;
@@ -773,10 +773,9 @@ transform: translateY(100%); /* Start off-screen */
   --fa-secondary-opacity:1;
   font-size: 1rem;
 }
-
 .flox {
   display: none;
-  position: fixed; /* was missing or incorrect */
+  position: fixed; 
   top: 0;
   left: 0;
   height: 100dvh;
@@ -786,15 +785,101 @@ transform: translateY(100%); /* Start off-screen */
   background: transparent;
 }
 .floater {
-  position: absolute; /* not relative */
+  height: 0;
+  transition: height 400ms ease-out;
+  overflow: hidden;
+  position: absolute;
   bottom: 0;
-  left: 0;
-  width: 100%;
-  max-height: 100%;
+  width: 100vw;
   background: #1C1C1E;
   border-radius: 30px 30px 0 0;
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
 }
 
+.hw {
+  flex: 1; /* fill available space */
+  overflow-y: auto;
+  /* padding: 0 10px; */
+}
+
+.delete-confirm {
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  font-family: Manrope;
+  margin: 10px;
+}
+/* .delete-btn-wrap button{
+  padding: 10px 20px !important;
+  color: #ed2859 !important;
+  font-family: Manrope;
+  font-size: 1rem;
+  background: #1c1c1c !important;
+  border-radius: 15px !important;
+  border: 1px solid gray !important;
+} */
+
+.delete-btn-wrap{
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 10px;
+}
+.sdc{
+  padding: 10px 20px;
+  margin: 10px;
+  background: #222;
+  /* color: #bf0836; */
+  position: relative;
+  font-family: Varela Round;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 1rem;
+  outline: none;
+  /* border: 1px solid #ed2859; */
+  border: none;
+  border-radius: 10px;
+  flex: 1;
+    padding: 10px 30px;
+    border-radius: 8px;
+    background: #4444443c;
+    color: #7a7a7a;
+    border: none;
+    font-weight: 600;
+    transform: scale(1);
+    transition: transform 100ms;
+}
+
+.sdc:active{
+  transform: scale(0.8);
+}
+
+.cnxc{
+  transform: scale(1);
+  transition: transform 100ms;
+}
+
+.cnxc:active{
+  transform: scale(0.8);
+}
+.fic{
+  font-size: 0.9rem;
+}
+.delete-confirm{
+  font-family: Manrope;
+}
+.delete-confirm button{
+  font-family: Manrope;
+}
+.missed-day {
+  background-color: #ffffff0f !important;
+
+}
+.missed-day:hover {
+  cursor: not-allowed;
+}
