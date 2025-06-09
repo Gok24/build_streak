@@ -193,7 +193,7 @@ function loadStreaks() {
     }
     
     sp = document.querySelector(".safepadding")
-    sp.classList.add(".show")
+    sp.classList.add("show")
 //<span class="ptxt">No habits, no worries. <br> <span class="sml">Even lions rest 20 hours a day.</span></span>
 //https://assets-v2.lottiefiles.com/a/83627cee-1153-11ee-b832-fb1242dd7de9/sSzsHHquis.lottie
     streaks.forEach(streak => {
