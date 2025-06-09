@@ -17,15 +17,15 @@ function toggleHeatmapView(streakId) {
 
 //     if (wrapper) {
 //       const wrapperBottom = wrapper.offsetTop + wrapper.offsetHeight;
-// const scrollTarget = Math.max(0, wrapper.offsetTop - 20); // leave a buffer
-// window.scrollTo({
-//   top: scrollTarget,
-//   behavior: "smooth"
-// });
-
+//       const scrollTarget = Math.max(0, wrapper.offsetTop - 20); // leave a buffer
+//       window.scrollTo({
+//         top: scrollTarget,
+//         behavior: "smooth"
+//       });
+      
 //     }
 //   }, 3000);
- }
+}
 
 // Format Date & Time nicely with AM/PM
 function formatDateTime(dateStr, timeStr) {
@@ -525,50 +525,110 @@ function formatDateKey(date) {
 
 
 function getCurrentStreak(dateSet, todayStr) {
+  const today = new Date(todayStr);
+  today.setHours(0, 0, 0, 0);
+
   let streak = 0;
-  let currentDate = new Date(todayStr);
-  while (true) {
-    const dateStr = formatDateKey(currentDate);
-    if (dateSet.has(dateStr)) {
-      streak++;
-      currentDate.setDate(currentDate.getDate() - 1);
-    } else {
-      break;
-    }
+  let current = new Date(today);
+
+  // If today is NOT marked, check if yesterday is marked
+  const isTodayMarked = dateSet.has(formatDateKey(today));
+  if (!isTodayMarked) {
+    current.setDate(current.getDate() - 1);
   }
+
+  while (dateSet.has(formatDateKey(current))) {
+    streak++;
+    current.setDate(current.getDate() - 1);
+  }
+
   return streak;
 }
 
+
 function getLongestStreak(dates) {
-  let maxStreak = 0, currentStreak = 1;
-  for (let i = 1; i < dates.length; i++) {
-    const prev = new Date(dates[i - 1]);
-    const curr = new Date(dates[i]);
+  if (dates.length === 0) return 0;
+
+  const sorted = [...dates].sort();
+  let maxStreak = 1;
+  let currentStreak = 1;
+
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = new Date(sorted[i - 1]);
+    const curr = new Date(sorted[i]);
     const diff = (curr - prev) / (1000 * 60 * 60 * 24);
+
     if (diff === 1) {
       currentStreak++;
     } else {
-      maxStreak = Math.max(maxStreak, currentStreak);
       currentStreak = 1;
     }
+
+    maxStreak = Math.max(maxStreak, currentStreak);
   }
-  return Math.max(maxStreak, currentStreak);
+
+  return maxStreak;
 }
 
-function getStreakGaps(dates) {
+
+function getStreakGaps(dates, createdAt) {
+  const sorted = [...dates].sort();
+  if (sorted.length === 0) return { gapCount: 0, longestGap: 0 };
+
+  const toMidnight = (d) => {
+    const date = new Date(d);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+
   let gapCount = 0;
   let longestGap = 0;
-  for (let i = 1; i < dates.length; i++) {
-    const prev = new Date(dates[i - 1]);
-    const curr = new Date(dates[i]);
+
+  const today = toMidnight(new Date());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const created = toMidnight(createdAt);
+  const firstEntry = toMidnight(sorted[0]);
+  const lastEntry = toMidnight(sorted[sorted.length - 1]);
+
+  // 1. Gap from creation → first entry
+  const initialGap = (firstEntry - created) / (1000 * 60 * 60 * 24);
+  if (initialGap > 0) {
+    gapCount++;
+    longestGap = initialGap;
+  }
+
+  // 2. Gaps between entries
+  for (let i = 1; i < sorted.length; i++) {
+    const prev = toMidnight(sorted[i - 1]);
+    const curr = toMidnight(sorted[i]);
     const gap = (curr - prev) / (1000 * 60 * 60 * 24) - 1;
     if (gap > 0) {
       gapCount++;
-      if (gap > longestGap) longestGap = gap;
+      longestGap = Math.max(longestGap, gap);
     }
   }
-  return { gapCount, longestGap };
+
+  // ✅ 3. Final check: did the user miss yesterday?
+  const dateSet = new Set(sorted.map(d => formatDateKey(toMidnight(d))));
+  const missedYesterday = !dateSet.has(formatDateKey(yesterday));
+
+  if (missedYesterday && yesterday > lastEntry) {
+    gapCount++;
+    longestGap = Math.max(longestGap, 1);
+  }
+
+  return {
+    gapCount,
+    longestGap: Math.floor(longestGap),
+  };
 }
+
+
+
+
+
 function formatDateDDMMYYYY(date) {
   const d = new Date(date);
   const day = String(d.getDate()).padStart(2, "0");
@@ -613,7 +673,8 @@ function renderHeatmap(streak, entries, isExpanded, todayStr) {
   const currentStreak = getCurrentStreak(dateSet, todayStr);
   const longestStreak = getLongestStreak(sortedDates);
   
-  const { gapCount, longestGap } = getStreakGaps(sortedDates);
+  const { gapCount, longestGap } = getStreakGaps(sortedDates, streak.createdAt);
+
   
   
   // Optional:
@@ -623,7 +684,20 @@ function renderHeatmap(streak, entries, isExpanded, todayStr) {
   
   const streakStart = new Date(streak.createdAt);
   streakStart.setHours(0, 0, 0, 0);
+  // Inject a virtual "missed" yesterday if needed for gap calculation
+const yesterday = new Date(todayLocal);
+yesterday.setDate(todayLocal.getDate() - 1);
+yesterday.setHours(0, 0, 0, 0);
+const yesterdayStr = formatDateKey(yesterday);
+
+const lastEntryDate = sortedDates.length ? new Date(sortedDates[sortedDates.length - 1]) : null;
+
+if (!dateSet.has(yesterdayStr) && (!lastEntryDate || yesterday > lastEntryDate)) {
+  const sortedDates = entries.map(e => e.date).sort();
+  const dateSet = new Set(sortedDates);
   
+}
+
   const totalDays = Math.max(1, Math.floor((todayLocal - streakStart) / (1000 * 60 * 60 * 24)) + 1);
   const uniqueDays = new Set(entries.map(e => e.date));
   const completionRate = Math.round((uniqueDays.size / totalDays) * 100);
@@ -675,8 +749,19 @@ function renderHeatmap(streak, entries, isExpanded, todayStr) {
   // --- Monthly View Inside Floating Drawer ---
 
   // Remove any existing .flox if already open
-  const existingFlox = document.querySelector(".flox");
-  if (existingFlox) existingFlox.remove();
+// If a .flox already exists, clean it up and reset height
+const existingFlox = document.querySelector(".flox");
+if (existingFlox) {
+  const oldFloater = existingFlox.querySelector(".floater");
+  if (oldFloater) {
+    oldFloater.style.height = "0"; // trigger collapse
+  }
+
+  // Wait for collapse animation, then remove
+  setTimeout(() => {
+    existingFlox.remove();
+  }, 300); // match transition time
+}
 
   // Build modal structure
   const flox = document.createElement("div");
@@ -754,15 +839,26 @@ while (currentDate <= today) {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
+      date.setHours(0, 0, 0, 0);
       const dateStr = formatDateKey(date);
-
+    
       const cell = renderHeatmapCell(dateStr, todayStr, entryMap.get(dateStr));
+    
+      const isPast = date <= todayLocal;
+      const isAfterStart = date >= streakStart;
+      const isMissed = !entryMap.has(dateStr) && isPast && isAfterStart;
+    
+      if (isMissed) {
+        cell.classList.add("missed-day"); // 🔧 add this
+      }
+    
       if (dateStr === todayStr) {
         cell.classList.add("selected");
       }
-
+    
       monthlyGrid.appendChild(cell);
     }
+    
 
     lastMonth = thisMonth;
   }
@@ -787,7 +883,7 @@ statsContainer.className = "stats";
 
 const statsHTML = `
   <div class="scontainer" style="display: flex; height: 100%; width: 100%; align-items: center; justify-content: center;">
-    <div class="grid" style="display: grid; height: 100%; width: 100%; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(5, 1fr); gap: 16px; background-color: #eee; padding: 8px; border-radius: 8px;">
+    <div class="grid" style="display: grid; height: 100%; width: 100%; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(4, 1fr); gap: 16px; background-color: #eee; padding: 8px; border-radius: 8px;">
 
       <div style="font-family: 'M PLUS 2 Variable', sans-serif; grid-column: span 3; background-color: rgba(255, 182, 193, 0.5); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;">
         <p> <span class="bib"> <i class="fa-duotone fa-solid fa-fire statfire "></i> ${currentStreak}</span> <br> <span class="subr"> Streak </span></p>
@@ -824,7 +920,27 @@ const statsHTML = `
 
     </div>
   </div>
+
+
+  <div class="delete-confirm" style="display:none; grid-column: span 6; background: #2a2a2a; padding: 20px; border-radius: 10px;">
+  <p style="color: #fff; font-size: 0.85rem; margin-bottom: 10px;">Are you sure you want to delete this streak? This can't be undone.</p>
+  <div style="display: flex; gap: 10px; justify-content: space-between;">
+    <button class="cnxc" onclick="cancelDelete()" style="flex: 1; padding: 10px; border-radius: 8px; background: #444; color: #ccc; font-weight: 600; border: none;">Cancel</button>
+    <button onclick="confirmDelete('${streak.id}')" style="flex: 1; padding: 10px; border-radius: 8px; background: #ed2859; color: white; font-weight: 600; border: none;">Yes, Delete</button>
+  </div>
+</div>
+
+<div class="delete-btn-wrap" >
+
+  <button onclick="showDeleteConfirm()" 
+      class="sdc">
+    <i class="fa-duotone fa-solid fa-trash fic"></i> Delete 
+  </button>
+</div>
+
 `;
+
+
 
 statsContainer.innerHTML = statsHTML;
 hw.appendChild(statsContainer);
@@ -832,9 +948,30 @@ hw.appendChild(statsContainer);
 
   // Final assembly
   floater.appendChild(floatwrap); // for slider
-  floater.appendChild(hw);        // for heatmap
-  flox.appendChild(floater);      // all inside modal
+  floater.appendChild(hw); 
+  requestAnimationFrame(() => {
+    floater.style.height = "90vh";
+  });
+         // for heatmap
+  flox.appendChild(floater); 
+
+//   floater.style.height = "0"; // reset height to collapsed
+// requestAnimationFrame(() => {
+//   floater.style.height = "90vh"; // expand
+// });
+     // all inside modal
   document.body.appendChild(flox);
+  // Reset height to 0 before triggering animation
+floater.style.height = "0";
+
+// 🧠 Force browser reflow (this is the key)
+void floater.getBoundingClientRect();
+
+// Trigger the smooth height transition
+requestAnimationFrame(() => {
+  floater.style.height = "90vh";
+});
+
    // Append to body instead of heatmap container
 
   // --- Pull-down to close functionality ---
@@ -874,11 +1011,59 @@ hw.appendChild(statsContainer);
   });
 
   slider.onclick = function () {
-    flox.style.transition = "all 0.3s ease";
-    flox.style.display = "none";
-    const btn = document.querySelector(`.exvb[data-streak-id="${streak.id}"]`);
-    if (btn) btn.click();
+    floater.style.height = "0";
+    setTimeout(() => {
+      flox.remove();
+      const btn = document.querySelector(`.exvb[data-streak-id="${streak.id}"]`);
+      if (btn) btn.click();
+    }, 400); // match transition duration
   };
+  
+}
+function showDeleteConfirm() {
+  const confirmBox = document.querySelector(".delete-confirm");
+  const deleteBtnWrap = document.querySelector(".delete-btn-wrap");
+
+  if (confirmBox) confirmBox.style.display = "block";
+  if (deleteBtnWrap) deleteBtnWrap.style.display = "none";
 }
 
+function cancelDelete() {
+  const confirmBox = document.querySelector(".delete-confirm");
+  const deleteBtnWrap = document.querySelector(".delete-btn-wrap");
 
+  if (confirmBox) confirmBox.style.display = "none";
+  if (deleteBtnWrap) deleteBtnWrap.style.display = "block";
+}
+
+function confirmDelete(streakId) {
+  const flox = document.querySelector(".flox");
+  if (flox) {
+    flox.classList.add("fade-out");
+
+    // Wait for animation to complete before deletion
+    setTimeout(() => {
+      const tx = db.transaction(["streaks", "entries"], "readwrite");
+
+      tx.objectStore("streaks").delete(streakId);
+
+      const entryStore = tx.objectStore("entries").index("streakId");
+      const getRequest = entryStore.getAll(streakId);
+
+      getRequest.onsuccess = () => {
+        const entries = getRequest.result;
+        const entriesStore = tx.objectStore("entries");
+        entries.forEach(entry => entriesStore.delete(entry.entryId));
+      };
+
+      tx.oncomplete = () => {
+        if (flox) flox.remove();
+        loadStreaks();
+      };
+
+      tx.onerror = () => {
+        alert("Failed to delete streak. Please try again.");
+      };
+    }, 300); // matches CSS transition duration
+  }
+}
