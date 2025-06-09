@@ -17,10 +17,12 @@ setTimeout(() => {
 
     if (wrapper) {
       const wrapperBottom = wrapper.offsetTop + wrapper.offsetHeight;
-      window.scrollTo({
-        top: wrapperBottom - window.innerHeight / 2, // center-ish scroll
-        behavior: "smooth"
-      });
+const scrollTarget = Math.max(0, wrapper.offsetTop - 20); // leave a buffer
+window.scrollTo({
+  top: scrollTarget,
+  behavior: "smooth"
+});
+
     }
   }, 300);
 }
