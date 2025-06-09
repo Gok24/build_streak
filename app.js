@@ -24,7 +24,7 @@ window.scrollTo({
 });
 
     }
-  }, 300);
+  }, 3000);
 }
 
 // Format Date & Time nicely with AM/PM
