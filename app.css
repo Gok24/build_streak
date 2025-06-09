@@ -695,7 +695,7 @@ transform: translateY(100%); /* Start off-screen */
 }
 
 .safepadding{
-  height: 100px;
+  height: 150px;
   display: none;
 }
 .safepadding.show{
