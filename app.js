@@ -11,21 +11,21 @@ function toggleHeatmapView(streakId) {
   }
   updateStreakLogById(streakId);
 
-setTimeout(() => {
-    const heatmap = document.getElementById(`heatmap-${streakId}`);
-    const wrapper = heatmap?.closest(".streak-box");
+// setTimeout(() => {
+//     const heatmap = document.getElementById(`heatmap-${streakId}`);
+//     const wrapper = heatmap?.closest(".streak-box");
 
-    if (wrapper) {
-      const wrapperBottom = wrapper.offsetTop + wrapper.offsetHeight;
-const scrollTarget = Math.max(0, wrapper.offsetTop - 20); // leave a buffer
-window.scrollTo({
-  top: scrollTarget,
-  behavior: "smooth"
-});
+//     if (wrapper) {
+//       const wrapperBottom = wrapper.offsetTop + wrapper.offsetHeight;
+// const scrollTarget = Math.max(0, wrapper.offsetTop - 20); // leave a buffer
+// window.scrollTo({
+//   top: scrollTarget,
+//   behavior: "smooth"
+// });
 
-    }
-  }, 3000);
-}
+//     }
+//   }, 3000);
+// }
 
 // Format Date & Time nicely with AM/PM
 function formatDateTime(dateStr, timeStr) {
