@@ -24,7 +24,7 @@
     width: 100vw;
     display: none;
     background: #101010;
-    z-index: 2;
+    z-index: 4;
 }
 .cn{
     display: flex;
@@ -147,4 +147,29 @@
     border-radius: 30px;
     font-weight: 500;
     font-size: 0.78rem;
+}
+
+.time{
+    padding: 30px 20px 15px 20px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    font-family: Manrope;
+    position: sticky;
+    top: 0;
+    background: #000;
+    border-radius:  0 0 15px 15px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.405);
+}
+.dlabel,.tme{
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgb(160, 160, 160);
+}
+.maint .actual .dy{
+    font-size: 1.25rem;
+    color: #fff;
+}
+.maint .actual span{
+    color: rgb(160, 160, 160);
 }
