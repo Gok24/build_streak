@@ -38,13 +38,20 @@
     <!-- Streak List -->
 
     <div class="view">
+      <div class="time">
+        <div class="dlabel">
+          <p>Today,</p>
+        </div>
+        <div class="maint">
+          <p class="actual"><span class="dy"></span> <span class="tme"></span></p>
+        </div>
+
+      </div>
     <div id="streakList"></div>
     <div class="safepadding"></div>
   </div>
   <div id="tooltip" class="custom-tooltip"></div>
 </div>
-
-
 
 <div class="crt">
   <button onclick="opencn()">Make a new Habit <i class="fa-duotone fa-solid fa-sparkles"></i></button>
@@ -60,11 +67,37 @@
   </div>
 </div>
 
-
   <script src="app.js"></script>
   <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
   <script src="layoutop.js"></script>
-
   <script src="tan.js"></script>
+
+  <script>
+    function updateLocalDateTime() {
+      const dayNames = [
+        'Sunday', 'Monday', 'Tuesday', 'Wednesday',
+        'Thursday', 'Friday', 'Saturday'
+      ];
+  
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+  
+      const now = new Date();
+      const day = dayNames[now.getDay()];
+      const date = now.getDate();
+      const month = months[now.getMonth()];
+      const year = now.getFullYear();
+  
+      const formattedDate = `${date} ${month} ${year}`;
+  
+      document.querySelector('.dy').textContent = `${day},`;
+      document.querySelector('.tme').textContent = formattedDate;
+    }
+  
+    window.onload = updateLocalDateTime;
+  </script>
+  
 </body>
 </html>
