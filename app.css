@@ -34,7 +34,7 @@ body::-webkit-scrollbar {
 /* Streak Box */
 .streak-box {
   border: 1px solid #1e1e1e;
-  margin-top: 15px;
+  /* margin-top: 15px; */
   padding: 1px;
   border-radius: 8px;
   background: #010101;
@@ -67,7 +67,7 @@ body::-webkit-scrollbar {
   max-height: 230px;
   overflow: scroll;
   padding:0px 0px 10px 0;
-  border-radius: 20px;
+  /* border-radius: 20px; */
   background: #1b1b1b;
   overflow: scroll;
   -ms-overflow-style: none;  /* IE and Edge */
@@ -322,7 +322,7 @@ align-items: center;
 }
 
 .ton{
-  margin: 25px;
+  margin: 25px 20px;
   font-family: Manrope;
   display: flex;
   flex-direction: column;
@@ -332,7 +332,7 @@ align-items: center;
   font-size: 1.4rem;
   color: #ccc;
   font-weight: 600;
-  font-family: Varela Round;
+  /* font-family: Varela Round; */
 }
 .ton .desc{
   font-size: 0.9rem;
@@ -470,6 +470,7 @@ align-items: center;
   bottom: 0px;
   width: 100vw;
   background: #1C1C1E;
+  background: #161616 !important;
   border-radius: 30px 30px 0 0;
   box-shadow: -10px -20px 100px #000;
 }
@@ -610,13 +611,13 @@ transform: translateY(100%); /* Start off-screen */
   width: 100vw;
   background: #1C1C1E;
   border-radius: 30px 30px 0 0;
-  box-shadow: -10px -20px 100px #000;
+  box-shadow: -10px -35px 70px #000000bd;
   transition: transform 0.3s ease;
   transform: translateY(0); /* show it */
 }
 
 .hw {
-  background: #1c1c1c;
+  background: #161616;
   height: 100vh;
   overflow-y: auto;
   width: 100vw;
@@ -636,7 +637,7 @@ transform: translateY(100%); /* Start off-screen */
 }
 .heatmap-wrapper{
   position: sticky;
-  background: #111111;
+  background: #000000;
 }
 
 .stats{
@@ -662,7 +663,7 @@ transform: translateY(100%); /* Start off-screen */
   gap: 6px !important;
 }
 .scontainer .grid div{
-  background: #2d2d2d !important;
+  background: #2d2d2d8a !important;
   padding: 13px 5px !important;
   font-size: 12px !important;
   font-family: Manrope !important;
@@ -728,6 +729,9 @@ transform: translateY(100%); /* Start off-screen */
   padding: 0;
   margin: 0;
   background: #fff;
+  position: absolute;
+  top: 0;
+  z-index: -1;
   /* animation: blackout 10s ease-in-out infinite; */
 }
 
@@ -877,7 +881,7 @@ transform: translateY(100%); /* Start off-screen */
   font-family: Manrope;
 }
 .missed-day {
-  background-color: #ffffff0f !important;
+  background-color: #ffffff1e !important;
 
 }
 .missed-day:hover {
